@@ -71,6 +71,8 @@ _display_data() {
         printf "$_COLOR/$COLOR_"
         $3
         printf "$_COLOR|$COLOR_"
+    else
+        echo ""
     fi
 }
 
@@ -90,5 +92,3 @@ else
                   "_print_minutes $((DURATION%3600/60)) $((DURATION%60))"
     _run_action $1
 fi
-
-echo ""
