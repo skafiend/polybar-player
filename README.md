@@ -1,7 +1,6 @@
 # polybar-player
 
 This simple script generates a customizable string, which can be easily modified, for two chosen audio players.
-I'm currently using mpv to play audiobooks and cmus for the rest, so this script was pretty useful.
 
 ## i3 bindings
 ```
