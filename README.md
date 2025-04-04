@@ -28,7 +28,7 @@ bindsym mod4+b exec pgrep -f '^mpv_audiobook' || pkill -f cmus; exec mpv --title
   scroll-down = ~/.config/polybar/player.sh down
 ```
 ## ~/polybar/player.sh
-- Change these variables as you need. Keep in mind that POSITION and DURATION is measured in seconds
+- Change these variables as you need. Keep in mind that POSITION and DURATION are measured in seconds
 - Other variables are pretty self-explanatory
 ### cmus
 ![cmus_preview](https://github.com/skafiend/polybar-player/blob/main/preview_cmus.png)
