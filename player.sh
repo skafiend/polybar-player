@@ -69,7 +69,7 @@ _get_data() {
     esac
 }
 
-# time_format (Number)
+# time_format (Number) -> "title position / duration | "
 _compose_string() {
     # ' - ' - cmus stopped and we didn't get any info
     if [[ ! -z "$TITLE" && "$TITLE" != ' - ' ]]; then
