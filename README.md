@@ -13,7 +13,7 @@ bindsym $mod4+s exec --no-startup-id pgrep -f '^mpv_audiobook' || pkill -f cmus;
 ```
 
 ## ~/polybar/config.ini
-- The script should work for any bar which supports custom scripts with some text output
+- It should work for any bar which supports custom scripts/modules
 ```
   [module/player]
   type = custom/script
