@@ -9,7 +9,7 @@ This simple script generates a customizable string, which can be easily modified
 # run cmus and kill mpv
 bindsym mod4+s exec pgrep --full '^cmus' || pkill -f mpv_audiobook; exec kitty --class cmus -o font_size=13 -e cmus
 # run mpv and kill cmus
-bindsym $mod4+s exec --no-startup-id pgrep -f '^mpv_audiobook' || pkill -f cmus; exec mpv --title="mpv_audiobook" --input-ipc-server=/tmp/mpvsocket --save-position-on-quit -no-video "$(cat ~/.config/mpv/curbook.tmp)"
+bindsym mod4+b exec --no-startup-id pgrep -f '^mpv_audiobook' || pkill -f cmus; exec mpv --title="mpv_audiobook" --input-ipc-server=/tmp/mpvsocket --save-position-on-quit -no-video "$(cat ~/.config/mpv/curbook.tmp)"
 ```
 
 ## ~/polybar/config.ini
