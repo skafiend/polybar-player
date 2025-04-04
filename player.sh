@@ -46,7 +46,6 @@ _get_data() {
         mpv)
         MPV_SOCKET='/tmp/mpvsocket'
         TITLE=$(echo '{ "command": ["get_property", "media-title"] }' | socat - $MPV_SOCKET | jq -r .data)
-        # in seconds
         POSITION=$(echo '{ "command": ["get_property_string", "time-pos"] }' | socat - $MPV_SOCKET  | jq -r .data | cut -d'.' -f 1)
         DURATION=$(echo '{ "command": ["get_property_string", "duration"] }' | socat - $MPV_SOCKET | jq -r .data | cut -d'.' -f 1)
         PLAY="echo 'cycle pause' | socat - $MPV_SOCKET" 
