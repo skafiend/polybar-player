@@ -1,6 +1,7 @@
 # polybar-player
 
 This simple script generates a customizable string, which can be easily modified, for two chosen audio players.
+I'm currently using mpv to play audiobooks and cmus for the rest, so this script was pretty useful.
 
 ## i3 bindings
 ```
@@ -15,15 +16,41 @@ bindsym $mod4+s exec --no-startup-id pgrep -f '^mpv_audiobook' || pkill -f cmus;
 ## ~/polybar/config.ini
 - The script should work for any bar which supports custom scripts with some text output
 ```
-[module/player]
-type = custom/script
-exec = ~/.config/polybar/player.sh
-# modify this line as necessary
-exec-if = pgrep -f mpv_audiobook || pgrep -x cmus
-tail = true
-interval = 1
-click-left = ~/.config/polybar/player.sh left
-click-right = ~/.config/polybar/player.sh right
-scroll-up = ~/.config/polybar/player.sh up
-scroll-down = ~/.config/polybar/player.sh down
+  [module/player]
+  type = custom/script
+  exec = ~/.config/polybar/player.sh
+  # modify this line as necessary
+  exec-if = pgrep -f mpv_audiobook || pgrep -x cmus
+  tail = true
+  interval = 1
+  click-left = ~/.config/polybar/player.sh left
+  click-right = ~/.config/polybar/player.sh right
+  scroll-up = ~/.config/polybar/player.sh up
+  scroll-down = ~/.config/polybar/player.sh down
+```
+## ~/polybar/player.sh
+- Change these variables as you need. Keep in mind that POSITION and DURATION is measured in seconds
+- Other variables are pretty self-explanatory
+### cmus
+```
+  NAME=$(cmus-remote -C status | grep "tag title" | cut -f 3- -d ' ')
+  ARTIST=$(cmus-remote -C status | grep "tag artist" | cut -f 3- -d ' ')
+  TITLE="$ARTIST - $NAME"
+  POSITION=$(cmus-remote -C status | grep "position" | cut -f 2 -d ' ')
+  DURATION=$(cmus-remote -C status | grep "duration" | cut -f 2 -d ' ')
+  PLAY="cmus-remote --pause"
+  EXIT="pkill -x cmus"
+  UP="cmus-remote --volume +5%"
+  DOWN="cmus-remote --volume -5%"
+```
+### mpv
+```
+  MPV_SOCKET='/tmp/mpvsocket'
+  TITLE=$(echo '{ "command": ["get_property", "media-title"] }' | socat - $MPV_SOCKET | jq -r .data)
+  POSITION=$(echo '{ "command": ["get_property_string", "time-pos"] }' | socat - $MPV_SOCKET  | jq -r .data | cut -d'.' -f 1)
+  DURATION=$(echo '{ "command": ["get_property_string", "duration"] }' | socat - $MPV_SOCKET | jq -r .data | cut -d'.' -f 1)
+  PLAY="echo 'cycle pause' | socat - $MPV_SOCKET" 
+  EXIT="echo 'quit' | socat - $MPV_SOCKET" 
+  UP="echo 'add volume +5' | socat - $MPV_SOCKET" 
+  DOWN="echo 'add volume -5' | socat - $MPV_SOCKET" 
 ```
