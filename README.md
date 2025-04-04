@@ -31,6 +31,7 @@ bindsym $mod4+s exec --no-startup-id pgrep -f '^mpv_audiobook' || pkill -f cmus;
 - Change these variables as you need. Keep in mind that POSITION and DURATION is measured in seconds
 - Other variables are pretty self-explanatory
 ### cmus
+![cmus_preview](https://github.com/skafiend/polybar-player/blob/main/preview_cmus.png)
 ```
   NAME=$(cmus-remote -C status | grep "tag title" | cut -f 3- -d ' ')
   ARTIST=$(cmus-remote -C status | grep "tag artist" | cut -f 3- -d ' ')
@@ -43,6 +44,7 @@ bindsym $mod4+s exec --no-startup-id pgrep -f '^mpv_audiobook' || pkill -f cmus;
   DOWN="cmus-remote --volume -5%"
 ```
 ### mpv
+![mpv_preview](https://github.com/skafiend/polybar-player/blob/main/preview_mpv.png)
 ```
   MPV_SOCKET='/tmp/mpvsocket'
   TITLE=$(echo '{ "command": ["get_property", "media-title"] }' | socat - $MPV_SOCKET | jq -r .data)
