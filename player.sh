@@ -37,6 +37,7 @@ _run_action() {
 _getdata() {
     case $1 in
         mpv)
+        # you have to run mpv with a path to the socket to make it work
         MPV_SOCKET='/tmp/mpvsocket'
         TITLE=$(echo '{ "command": ["get_property", "media-title"] }' | socat - $MPV_SOCKET | jq -r .data)
         # in seconds
