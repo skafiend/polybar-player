@@ -1,6 +1,6 @@
 # polybar-player
-# assume you run only one player at a time!!!
 
+## ~/polybar/config.ini
 ```
 [module/player]
 type = custom/script
@@ -13,3 +13,4 @@ click-right = ~/.config/polybar/player.sh right
 scroll-up = ~/.config/polybar/player.sh up
 scroll-down = ~/.config/polybar/player.sh down
 ```
+# 
