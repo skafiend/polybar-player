@@ -2,7 +2,7 @@
 
 _COLOR="%%{F$PRIMARY_COLOR}"
 COLOR_="%%{F-}"
-MAX_TITLE=55
+MAX_TITLE=45
 ACTION="$1"
 
 # time_in_seconds 
@@ -21,7 +21,8 @@ _time() {
 
 _trim_title() {
     if [ ${#1} -gt $MAX_TITLE ]; then
-        TITLE="$(printf '%.55s' "$1")..."
+        # * is a placeholder for an integer (in this case, the value of MAX_TITLE),
+        TITLE="$(printf '%.*s' "$MAX_TITLE" "$1")..."
     else
         TITLE="$1"
     fi
