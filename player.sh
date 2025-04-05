@@ -5,15 +5,17 @@ COLOR_="%%{F-}"
 MAX_TITLE=55
 ACTION="$1"
 
-# time_in_seconds format (3/whatever)
+# time_in_seconds 
+# everything is converted into hours/minutes/seconds accordingly
 _time() {
-    if [ $2 == 3 ]; then
-        printf ' %02d:%02d:%02d ' "$(($1/3600))" "$(($1%3600/60))" "$(($1%60))"
-    fi
-
-    if [ $2 == 2 ]; then
-        printf ' %02d:%02d ' "$(($1%3600/60))" "$(($1%60))"
-    fi
+    case $2 in
+        "00:00")
+            printf ' %02d:%02d ' "$(($1%3600/60))" "$(($1%60))"
+        ;;
+        "00:00:00")
+            printf ' %02d:%02d:%02d ' "$(($1/3600))" "$(($1%3600/60))" "$(($1%60))"
+        ;;
+    esac
 }
 
 
@@ -46,6 +48,7 @@ _get_data() {
         mpv)
         MPV_SOCKET='/tmp/mpvsocket'
         TITLE=$(echo '{ "command": ["get_property", "media-title"] }' | socat - $MPV_SOCKET | jq -r .data)
+        # in seconds
         POSITION=$(echo '{ "command": ["get_property_string", "time-pos"] }' | socat - $MPV_SOCKET  | jq -r .data | cut -d'.' -f 1)
         DURATION=$(echo '{ "command": ["get_property_string", "duration"] }' | socat - $MPV_SOCKET | jq -r .data | cut -d'.' -f 1)
         PLAY="echo 'cycle pause' | socat - $MPV_SOCKET" 
@@ -92,7 +95,7 @@ _display() {
 
 # assume: only one thing is running at a time
 if pgrep -f mpv_audiobook > /dev/null; then
-    _display mpv 3
+    _display mpv "00:00:00"
 else
-    _display cmus 2
+    _display cmus "00:00"
 fi
