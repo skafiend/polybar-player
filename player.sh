@@ -1,19 +1,30 @@
 #!/bin/bash
 
+MVP="$(pgrep -f mpv_audiobook)"
+CMUS="$(pgrep -x cmus)"
+
+if [[ -z $MVP ]] && [[ -z $CMUS ]]; then
+    echo
+    exit 99
+fi
+
 _COLOR="%%{F$PRIMARY_COLOR}"
 COLOR_="%%{F-}"
-MAX_TITLE=45
+MAX_TITLE=35
 ACTION="$1"
+
+#echo "CMUS: $CMUS"
+#echo "MPV: "$MVP""
 
 # time_in_seconds 
 # everything is converted into hours/minutes/seconds accordingly
 _time() {
     case $2 in
         "00:00")
-            printf ' %02d:%02d ' "$(($1%3600/60))" "$(($1%60))"
+            printf '%02d:%02d' "$(($1%3600/60))" "$(($1%60))"
         ;;
         "00:00:00")
-            printf ' %02d:%02d:%02d ' "$(($1/3600))" "$(($1%3600/60))" "$(($1%60))"
+            printf '%02d:%02d:%02d' "$(($1/3600))" "$(($1%3600/60))" "$(($1%60))"
         ;;
     esac
 }
@@ -48,7 +59,12 @@ _get_data() {
     case $1 in
         mpv)
         MPV_SOCKET='/tmp/mpvsocket'
-        TITLE=$(echo '{ "command": ["get_property", "media-title"] }' | socat - $MPV_SOCKET | jq -r .data)
+        if ! [[ -f $MPV_SOCKET ]]; then
+            exit 77
+        fi
+        # from tags
+        TITLE=$(echo '{ "command": ["get_property", "path"] }' | socat - $MPV_SOCKET | jq -r .data)
+        TITLE=${TITLE##*/}
         POSITION=$(echo '{ "command": ["get_property_string", "time-pos"] }' | socat - $MPV_SOCKET  | jq -r .data | cut -d'.' -f 1)
         DURATION=$(echo '{ "command": ["get_property_string", "duration"] }' | socat - $MPV_SOCKET | jq -r .data | cut -d'.' -f 1)
         PLAY="echo 'cycle pause' | socat - $MPV_SOCKET" 
@@ -58,11 +74,15 @@ _get_data() {
         ;;
 
         cmus)
-        NAME=$(cmus-remote -C status | grep "tag title" | cut -f 3- -d ' ')
-        ARTIST=$(cmus-remote -C status | grep "tag artist" | cut -f 3- -d ' ')
+        INFO==$(cmus-remote -C status)
+        if [[ $? -ne 0 ]]; then
+            exit 88
+        fi
+        NAME=$(echo "$INFO" | grep "tag title" | cut -f 3- -d ' ')
+        ARTIST=$(echo "$INFO" | grep "tag artist" | cut -f 3- -d ' ')
         TITLE="$ARTIST - $NAME"
-        POSITION=$(cmus-remote -C status | grep "position" | cut -f 2 -d ' ')
-        DURATION=$(cmus-remote -C status | grep "duration" | cut -f 2 -d ' ')
+        POSITION=$(echo "$INFO" | grep "position" | cut -f 2 -d ' ')
+        DURATION=$(echo "$INFO" | grep "duration" | cut -f 2 -d ' ')
         PLAY="cmus-remote --pause"
         EXIT="pkill -x cmus"
         UP="cmus-remote --volume +5%"
@@ -75,13 +95,13 @@ _get_data() {
 _compose_string() {
     # ' - ' - cmus stopped and we didn't get any info
     if [[ ! -z "$TITLE" && "$TITLE" != ' - ' ]]; then
-        printf "$_COLOR$TITLE$COLOR_" 
+        printf "$_COLOR$TITLE$COLOR_ " 
         _time $POSITION $1
-        printf "$_COLOR/$COLOR_"
+        printf "$_COLOR / $COLOR_"
         _time $DURATION $1
-        printf "$_COLOR|$COLOR_"
+        printf " $_COLOR|$COLOR_"
     else
-        echo ""
+        echo
     fi
 }
 
