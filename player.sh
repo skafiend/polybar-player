@@ -59,7 +59,7 @@ _get_data() {
     case $1 in
         mpv)
         MPV_SOCKET='/tmp/mpvsocket'
-        if ! [[ -f $MPV_SOCKET ]]; then
+        if ! [[ -S $MPV_SOCKET ]]; then
             exit 77
         fi
         # from tags
